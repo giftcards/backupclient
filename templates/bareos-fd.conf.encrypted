@@ -1,0 +1,47 @@
+#
+# Default  Bareos File Daemon Configuration file
+#
+#  For Bareos release 14.2.2 (12 December 2014) -- redhat Red Hat Enterprise Linux Server release 6.5 (Santiago)
+#
+# There is not much to change here except perhaps the
+# File daemon Name to
+#
+
+#
+# List Directors who are permitted to contact this File daemon
+#
+Director {
+  Name = <%= @director %>-dir
+  Password = "<%= @password -%>"
+}
+
+#
+# "Global" File daemon configuration specifications
+#
+FileDaemon {                          # this is me
+  Name = <%= @hostname %>-fd
+  Maximum Concurrent Jobs = 20
+
+  # remove comment from "Plugin Directory" to load plugins from specified directory.
+  # if "Plugin Names" is defined, only the specified plugins will be loaded,
+  # otherwise all storage plugins (*-fd.so) from the "Plugin Directory".
+  #
+  Plugin Directory = /usr/lib64/bareos/plugins
+  # Plugin Names = ""
+
+  # if compatible is set to yes, we are compatible with bacula
+  # if you want to use new bareos features, please set
+  # compatible = no
+
+  PKI Signatures = Yes
+  PKI Encryption = Yes
+  PKI Keypair = "/etc/bareos/client-pki/fd.pem"
+  PKI Master Key = "/etc/bareos/client-pki/master.cert"
+}
+
+# Send all messages except skipped files back to Director
+Messages {
+  Name = Standard
+  director = <%= @hostname -%>-dir = all, !skipped, !restored
+  syslog = all
+}
